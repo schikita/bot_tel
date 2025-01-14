@@ -3,9 +3,9 @@ from .models import Channel, Post
 
 @admin.register(Channel)
 class ChannelAdmin(admin.ModelAdmin):
-    list_display = ('channel_name', 'telegram_link', 'active', 'created_at')
-    list_filter = ('active',)
-    search_fields = ('channel_name', 'telegram_link')
+    list_display = ("telegram_link", "channel_name", "is_active", "created_at", "updated_at")
+    list_filter = ("is_active",)
+    search_fields = ("telegram_link", "channel_name")
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
