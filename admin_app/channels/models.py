@@ -1,7 +1,12 @@
 from django.db import models
+import uuid
 
 
 class Channel(models.Model):
+    """
+    Модель для хранения информации о Telegram-каналах.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     telegram_link = models.URLField(unique=True, verbose_name="Ссылка на Telegram-канал")
     channel_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Имя канала")
     active = models.BooleanField(default=True, verbose_name="Активен")
@@ -13,6 +18,10 @@ class Channel(models.Model):
 
 
 class Post(models.Model):
+    """
+    Модель для хранения информации о постах Telegram-каналов.
+    """
+    id = models.AutoField(primary_key=True)
     channel = models.ForeignKey(Channel, on_delete=models.CASCADE, verbose_name="Канал")
     post_id = models.CharField(max_length=255, verbose_name="ID поста")
 
