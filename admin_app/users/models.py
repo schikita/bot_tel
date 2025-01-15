@@ -9,7 +9,7 @@ class Admin(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     telegram_id = models.CharField(max_length=255, unique=True, verbose_name="Telegram ID")
-    name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Имя администратора")  # Поле необязательное
+    name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Имя администратора")
     created_at = models.DateTimeField(default=now, verbose_name="Дата создания")
 
     def __str__(self):
