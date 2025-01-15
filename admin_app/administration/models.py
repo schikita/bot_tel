@@ -14,9 +14,6 @@ class Admin(models.Model):
 
 
 class SearchWord(models.Model):
-    """
-    Модель для ключевых слов.
-    """
     word = models.CharField(max_length=255, unique=True, verbose_name="Ключевое слово")
     lemma = models.CharField(max_length=255, blank=True, null=True, verbose_name="Лемма слова")
     admin = models.ForeignKey(Admin, on_delete=models.CASCADE, verbose_name="Админ")

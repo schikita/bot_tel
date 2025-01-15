@@ -1,18 +1,15 @@
 from django.db import models
 import uuid
-
-
-from django.db import models
-import uuid
+from django.utils.timezone import now
 from datetime import datetime, timedelta
 
 
 class Channel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    telegram_link = models.URLField(unique=True, verbose_name="Ссылка на Telegram-канал")
-    channel_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Имя канала")
+    url = models.URLField(unique=True, verbose_name="Ссылка на Telegram-канал")
+    name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Имя канала")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
-    priority = models.IntegerField(default=1, verbose_name="Приоритет парсинга")  # Чем выше значение, тем выше приоритет
+    priority = models.IntegerField(default=1, verbose_name="Приоритет парсинга") 
     interval_minutes = models.PositiveIntegerField(default=2, verbose_name="Интервал парсинга в минутах")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
@@ -21,7 +18,7 @@ class Channel(models.Model):
     next_scan_at = models.DateTimeField(blank=True, null=True, verbose_name="Следующее сканирование")
 
     def calculate_next_scan(self):
-        """Рассчитать время следующего сканирования."""
+        
         if self.last_scanned_at:
             self.next_scan_at = self.last_scanned_at + timedelta(minutes=self.scan_interval)
         else:
@@ -38,15 +35,15 @@ class Channel(models.Model):
 
 
 class Post(models.Model):
-    """
-    Модель для хранения информации о постах Telegram-каналов.
-    """
     id = models.AutoField(primary_key=True)
     channel = models.ForeignKey(Channel, on_delete=models.CASCADE, verbose_name="Канал")
-    post_id = models.CharField(max_length=255, verbose_name="ID поста")
+    post_id = models.PositiveIntegerField(verbose_name="ID поста", unique=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления в БД")
+    published_at = models.DateTimeField(default=now, verbose_name="Дата публикации")
 
     class Meta:
-        unique_together = ('post_id', 'channel')
+        verbose_name = "Пост"
+        verbose_name_plural = "Посты"
 
     def __str__(self):
-        return f"Пост {self.post_id} из {self.channel}"
+        return f"Пост {self.post_id} из канала {self.channel}"
