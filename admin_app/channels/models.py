@@ -43,6 +43,16 @@ class Post(models.Model):
     text = models.TextField(verbose_name="Текст поста", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления в БД")
     published_at = models.DateTimeField(default=now, verbose_name="Дата публикации")
+    last_parsed_at = models.DateTimeField(
+        blank=True, 
+        null=True, 
+        verbose_name="Время последнего парсинга"
+    )
+    next_parse_at = models.DateTimeField(
+        blank=True, 
+        null=True, 
+        verbose_name="Время начала следующего парсинга"
+    )
 
     class Meta:
         verbose_name = "Пост"
