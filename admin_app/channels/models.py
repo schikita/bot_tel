@@ -5,6 +5,9 @@ from datetime import datetime, timedelta
 
 
 class Channel(models.Model):
+    """
+    Модель для хранения информации о Telegram-каналах.
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     url = models.URLField(unique=True, verbose_name="Ссылка на Telegram-канал")
     name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Имя канала")
@@ -35,9 +38,13 @@ class Channel(models.Model):
 
 
 class Post(models.Model):
+    """
+    Модель для хранения информации о постах Telegram-каналов.
+    """
     id = models.AutoField(primary_key=True)
     channel = models.ForeignKey(Channel, on_delete=models.CASCADE, verbose_name="Канал")
     post_id = models.PositiveIntegerField(verbose_name="ID поста", unique=True)
+    text = models.TextField(blank=True, null=True, verbose_name="Текст поста")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления в БД")
     published_at = models.DateTimeField(default=now, verbose_name="Дата публикации")
 

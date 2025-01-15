@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('word', models.CharField(max_length=255, unique=True, verbose_name='Ключевое слово')),
                 ('lemma', models.CharField(blank=True, max_length=255, null=True, verbose_name='Лемма слова')),
-                ('admin', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='administration.admin', verbose_name='Админ')),
+                ('admin', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.admin', verbose_name='Админ')),
             ],
         ),
     ]
