@@ -34,7 +34,7 @@ class Post(models.Model):
     post_id = models.PositiveIntegerField(verbose_name="ID поста")
     text = models.TextField(verbose_name="Текст поста", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления в БД")
-    published_at = models.DateTimeField( verbose_name="Дата публикации")
+    published_at = models.DateTimeField(verbose_name="Дата публикации")
     last_parsed_at = models.DateTimeField(
         blank=True, 
         null=True, 
