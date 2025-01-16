@@ -4,22 +4,30 @@ from django.utils.timezone import now
 from django.core.validators import MinLengthValidator
 
 class Admin(models.Model):
-    """
-    Модель для администраторов.
-    """
+    """ Модель для администраторов. """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     telegram_id = models.CharField(max_length=255, unique=True, verbose_name="Telegram ID")
     name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Имя администратора")
     created_at = models.DateTimeField(default=now, verbose_name="Дата создания")
+    words = models.ManyToManyField(
+        "SearchWord", 
+        blank=True, 
+        related_name="admins", 
+        verbose_name="Ключевые слова, доступные админу"
+    )
+    channels = models.ManyToManyField(
+        "channels.Channel",
+        blank=True,
+        related_name="admins",
+        verbose_name="Каналы, на которые подписан администратор"
+    )
 
     def __str__(self):
         return self.name or str(self.telegram_id)
 
 
 class SearchWord(models.Model):
-    """
-    Модель для ключевых слов.
-    """
+    """ Модель для ключевых слов. """
     word = models.CharField(
         max_length=255,
         verbose_name="Ключевое слово",
@@ -31,11 +39,6 @@ class SearchWord(models.Model):
         blank=True,
         null=True,
         verbose_name="Лемма слова",
-    )
-    admins = models.ManyToManyField(
-        "Admin",
-        related_name="search_words",
-        verbose_name="Администраторы",
     )
 
     def save(self, *args, **kwargs):      
