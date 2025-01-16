@@ -1,6 +1,6 @@
 from django.db import models
 import uuid
-from django.utils.timezone import now
+from django.utils import timezone
 from django.core.validators import MinLengthValidator
 
 class Admin(models.Model):
@@ -8,7 +8,7 @@ class Admin(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     telegram_id = models.CharField(max_length=255, unique=True, verbose_name="Telegram ID")
     name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Имя администратора")
-    created_at = models.DateTimeField(default=now, verbose_name="Дата создания")
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
     words = models.ManyToManyField(
         "SearchWord", 
         blank=True, 
