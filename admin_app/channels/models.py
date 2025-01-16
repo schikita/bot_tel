@@ -21,10 +21,6 @@ class Channel(models.Model):
     def __str__(self):
         return self.name or self.url
 
-    def __str__(self):
-        return self.channel_name or self.telegram_link
-
-
 
 class Post(models.Model):
     """ Модель для хранения информации о постах Telegram-каналов. """
@@ -38,7 +34,7 @@ class Post(models.Model):
     post_id = models.PositiveIntegerField(verbose_name="ID поста", unique=True)
     text = models.TextField(verbose_name="Текст поста", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления в БД")
-    published_at = models.DateTimeField(verbose_name="Дата публикации")
+    published_at = models.DateTimeField( verbose_name="Дата публикации")
     last_parsed_at = models.DateTimeField(
         blank=True, 
         null=True, 
