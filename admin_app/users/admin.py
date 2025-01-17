@@ -17,7 +17,7 @@ class SearchWordAdmin(admin.ModelAdmin):
 
     def get_admins(self, obj):
         return ", ".join(
-            [admin.name or admin.telegram_id for admin in obj.admins.all()]
+            [admin.name or admin.telegram_id for admin in obj.admins.all()],
         )
 
     get_admins.short_description = "Администраторы"

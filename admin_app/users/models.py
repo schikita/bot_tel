@@ -9,10 +9,15 @@ class Admin(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     telegram_id = models.CharField(
-        max_length=255, unique=True, verbose_name="Telegram ID"
+        max_length=255,
+        unique=True,
+        verbose_name="Telegram ID",
     )
     name = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="Имя администратора"
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Имя администратора",
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     words = models.ManyToManyField(
@@ -29,7 +34,7 @@ class Admin(models.Model):
     )
 
     def __str__(self):
-        return self.name or str(self.telegram_id)
+        return self.name or self.telegram_id
 
 
 class SearchWord(models.Model):

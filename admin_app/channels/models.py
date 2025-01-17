@@ -9,9 +9,12 @@ class Channel(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="Имя канала"
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Имя канала",
     )
-    url = models.URLField(unique=True, verbose_name="Ссылка на Telegram-канал")
+    url = models.CharField(unique=True, verbose_name="Ссылка на Telegram-канал")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
     interval_minutes = models.PositiveIntegerField(
         default=2,
@@ -38,7 +41,8 @@ class Post(models.Model):
     post_id = models.PositiveIntegerField(verbose_name="ID поста")
     text = models.TextField(verbose_name="Текст поста", blank=True, null=True)
     created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name="Дата добавления в БД"
+        auto_now_add=True,
+        verbose_name="Дата добавления в БД",
     )
     published_at = models.DateTimeField(verbose_name="Дата публикации")
     last_parsed_at = models.DateTimeField(
