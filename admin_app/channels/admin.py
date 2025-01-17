@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from .models import Channel, Post
+
 
 @admin.register(Channel)
 class ChannelAdmin(admin.ModelAdmin):
@@ -7,8 +9,8 @@ class ChannelAdmin(admin.ModelAdmin):
     list_filter = ("is_active",)
     search_fields = ("url", "name")
 
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('post_id', 'channel')
-    search_fields = ('post_id', 'channel__name', 'channel__url')
-
+    list_display = ("post_id", "channel")
+    search_fields = ("post_id", "channel__name", "channel__url")

@@ -1,18 +1,22 @@
-from django.db import models
 import uuid
+
 from django.core.validators import MinValueValidator
+from django.db import models
 
 
 class Channel(models.Model):
-    """ Модель для Telegram-каналов. """
+    """Модель для Telegram-каналов."""
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Имя канала")
+    name = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="Имя канала"
+    )
     url = models.URLField(unique=True, verbose_name="Ссылка на Telegram-канал")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
     interval_minutes = models.PositiveIntegerField(
         default=2,
-        validators=[MinValueValidator(1)], 
-        verbose_name="Интервал парсинга в минутах"
+        validators=[MinValueValidator(1)],
+        verbose_name="Интервал парсинга в минутах",
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
@@ -22,36 +26,39 @@ class Channel(models.Model):
 
 
 class Post(models.Model):
-    """ Модель для хранения информации о постах Telegram-каналов. """
+    """Модель для хранения информации о постах Telegram-каналов."""
+
     id = models.AutoField(primary_key=True)
     channel = models.ForeignKey(
-        'Channel', 
+        "Channel",
         on_delete=models.CASCADE,
-        related_name="posts",  
-        verbose_name="Канал"
+        related_name="posts",
+        verbose_name="Канал",
     )
     post_id = models.PositiveIntegerField(verbose_name="ID поста")
     text = models.TextField(verbose_name="Текст поста", blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления в БД")
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name="Дата добавления в БД"
+    )
     published_at = models.DateTimeField(verbose_name="Дата публикации")
     last_parsed_at = models.DateTimeField(
-        blank=True, 
-        null=True, 
+        blank=True,
+        null=True,
         auto_now_add=True,
-        verbose_name="Время последнего парсинга"
+        verbose_name="Время последнего парсинга",
     )
     next_parse_at = models.DateTimeField(
-        blank=True, 
-        null=True, 
+        blank=True,
+        null=True,
         db_index=True,
         auto_now_add=True,
-        verbose_name="Время начала следующего парсинга"
+        verbose_name="Время начала следующего парсинга",
     )
 
     class Meta:
         verbose_name = "Пост"
         verbose_name_plural = "Посты"
-        unique_together = ('post_id', 'channel')
+        unique_together = ("post_id", "channel")
 
     def __str__(self):
         return f"Пост {self.post_id} из канала {self.channel}"
