@@ -5,7 +5,7 @@ from tortoise.models import Model
 
 
 class Channel(Model):
-    id = fields.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = fields.UUIDField(primary_key=True, default=uuid.uuid4)
     name = fields.CharField(max_length=255, null=True)
     url = fields.URLField(unique=True)
     is_active = fields.BooleanField(default=True)
@@ -37,19 +37,19 @@ class Post(Model):
 
 
 class Admin(Model):
-    id = fields.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = fields.UUIDField(primary_key=True, default=uuid.uuid4)
     telegram_id = fields.CharField(max_length=255, unique=True)
     name = fields.CharField(max_length=255, null=True, blank=True)
     created_at = fields.DatetimeField(auto_now_add=True)
     words = fields.ManyToManyField(
         "models.SearchWord",
-        related_name="admins",
+        related_name="users_admin_searchwords",
         through="admin_searchword",
     )
     channels = fields.ManyToManyField(
         "models.Channel",
         related_name="admins",
-        through="admin_channel",
+        through="users_admin_channels",
     )
 
     class Meta:
