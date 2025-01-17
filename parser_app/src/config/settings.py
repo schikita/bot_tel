@@ -23,7 +23,7 @@ DB_CONFIG = {
     },
     "apps": {
         "models": {
-            "models": ["database.models"],
+            "models": ["db.models"],
             "default_connection": "default",
         },
     },

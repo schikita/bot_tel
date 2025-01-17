@@ -20,7 +20,9 @@ class Channel(Model):
 class Post(Model):
     id = fields.IntField(pk=True)
     channel = fields.ForeignKeyField(
-        "models.Channel", related_name="posts", on_delete=fields.CASCADE
+        "models.Channel",
+        related_name="posts",
+        on_delete=fields.CASCADE,
     )
     post_id = fields.PositiveIntegerField()
     text = fields.TextField(null=True, blank=True)
@@ -40,10 +42,14 @@ class Admin(Model):
     name = fields.CharField(max_length=255, null=True, blank=True)
     created_at = fields.DatetimeField(auto_now_add=True)
     words = fields.ManyToManyField(
-        "models.SearchWord", related_name="admins", through="admin_searchword"
+        "models.SearchWord",
+        related_name="admins",
+        through="admin_searchword",
     )
     channels = fields.ManyToManyField(
-        "models.Channel", related_name="admins", through="admin_channel"
+        "models.Channel",
+        related_name="admins",
+        through="admin_channel",
     )
 
     class Meta:
@@ -64,7 +70,7 @@ class AdminSearchWord(Model):
     search_word = fields.ForeignKeyField("models.SearchWord", on_delete=fields.CASCADE)
 
     class Meta:
-        table_name = "admin_searchword"
+        table_name = "users_admin_searchwords"
 
 
 class AdminChannel(Model):
@@ -72,4 +78,4 @@ class AdminChannel(Model):
     channel = fields.ForeignKeyField("models.Channel", on_delete=fields.CASCADE)
 
     class Meta:
-        table_name = "admin_channel"
+        table_name = "users_admin_channels"
