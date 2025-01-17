@@ -1,6 +1,5 @@
 from django.db import models
 import uuid
-from django.utils import timezone
 from django.core.validators import MinLengthValidator
 
 class Admin(models.Model):
