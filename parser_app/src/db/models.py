@@ -1,6 +1,5 @@
 import uuid
 
-from django.core.validators import MinValueValidator
 from tortoise import fields
 from tortoise.models import Model
 
@@ -10,7 +9,7 @@ class Channel(Model):
     name = fields.CharField(max_length=255, null=True)
     url = fields.CharField(max_length=255, unique=True)
     is_active = fields.BooleanField(default=True)
-    interval_minutes = fields.IntField(default=2, validators=[MinValueValidator(1)])
+    interval_minutes = fields.IntField(default=2)
     created_at = fields.DatetimeField(auto_now_add=True)
     updated_at = fields.DatetimeField(auto_now=True)
 
@@ -25,7 +24,7 @@ class Post(Model):
         related_name="posts",
         on_delete=fields.CASCADE,
     )
-    post_id = fields.IntField(validators=[MinValueValidator(1)])
+    post_id = fields.IntField()
     text = fields.TextField(null=True, blank=True)
     created_at = fields.DatetimeField(auto_now_add=True)
     published_at = fields.DatetimeField(null=True)
