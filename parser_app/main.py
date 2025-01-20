@@ -1,19 +1,13 @@
 import asyncio
 
-from tortoise import Tortoise
+from src.config.settings import close, init_db
 
 
-async def init():
-    await Tortoise.init(
-        db_url="postgres://username:password@localhost:5432/db_bot_teleg",
-        modules={"models": ["parser_app.config.db.models"]},
-    )
+async def main():
+    await init_db()
+
+    await close()
 
 
-async def run():
-    await init()
-    print("Database connected and schemas generated.")
-
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(run())
+if __name__ == "__main__":
+    asyncio.run(main())

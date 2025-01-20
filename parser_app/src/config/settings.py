@@ -23,7 +23,7 @@ DB_CONFIG = {
     },
     "apps": {
         "models": {
-            "models": ["db.models"],
+            "models": ["src.db.models"],
             "default_connection": "default",
         },
     },
@@ -33,6 +33,7 @@ DB_CONFIG = {
 
 async def init_db():
     await Tortoise.init(config=DB_CONFIG)
+    await Tortoise.generate_schemas()
 
 
 async def close():
