@@ -1,12 +1,17 @@
 import asyncio
 
-from src.config.settings import close, init_db
+from src.utils.http_requests import get_channel_posts
 
 
 async def main():
-    await init_db()
+    channel_url = "https://t.me/s/sbbytoday"
+    posts = await get_channel_posts(channel_url)
 
-    await close()
+    if posts:
+        for post in posts:
+            print(f"Post ID: {post['post_id']}, Text: {post['text']}")
+    else:
+        print("Не удалось получить данные с канала.")
 
 
 if __name__ == "__main__":
