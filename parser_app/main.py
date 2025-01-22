@@ -9,7 +9,7 @@ async def main():
 
     if posts:
         for post in posts:
-            print(f"Post ID: {post['post_id']}, Text: {post['text']}")
+            print(f"{post['post_id']}\n{post['text']}\n")
     else:
         print("Не удалось получить данные с канала.")
 
