@@ -1,5 +1,6 @@
 import uuid
 
+from pymorphy3 import MorphAnalyzer
 from tortoise import fields
 from tortoise.models import Model
 
@@ -65,6 +66,20 @@ class SearchWord(Model):
         table_name = "users_searchword"
 
 
+async def add_or_update_keyword(word: str):
+    """Добавить или обновить ключевое слово и его лемму."""
+    existing_word = await SearchWord.filter(word=word).first()
+
+    if existing_word:
+        if not existing_word.lemma:
+            existing_word.lemma = lemmatize_word(word)
+            await existing_word.save()
+        return existing_word
+    lemma = lemmatize_word(word)
+    new_word = await SearchWord.create(word=word, lemma=lemma)
+    return new_word
+
+
 class AdminSearchWord(Model):
     admin = fields.ForeignKeyField("models.Admin", on_delete=fields.CASCADE)
     search_word = fields.ForeignKeyField("models.SearchWord", on_delete=fields.CASCADE)
@@ -79,3 +94,17 @@ class AdminChannel(Model):
 
     class Meta:
         table_name = "users_admin_channels"
+
+
+morph = MorphAnalyzer()
+
+
+async def get_keywords():
+    """Получить все ключевые слова и их леммы из базы данных."""
+    keywords = await SearchWord.all().values_list("word", "lemma")
+    return keywords
+
+
+def lemmatize_word(word: str) -> str:
+    """Лемматизация слова с использованием pymorphy3."""
+    return morph.parse(word)[0].normal_form

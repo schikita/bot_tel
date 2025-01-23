@@ -2,8 +2,8 @@ from tortoise import Tortoise
 
 DATABASE_HOST = "localhost"
 DATABASE_PORT = 5432
-DATABASE_USER = "postgres"
-DATABASE_PASSWORD = ""
+DATABASE_USER = "ser"
+DATABASE_PASSWORD = "1234"
 DATABASE_NAME = "db_bot_teleg"
 TIMEZONE = "UTC"
 
@@ -13,7 +13,7 @@ DB_CONFIG = {
             "engine": "tortoise.backends.asyncpg",
             "credentials": {
                 "host": DATABASE_HOST,
-                "port": 5432,
+                "port": DATABASE_PORT,
                 "user": DATABASE_USER,
                 "password": DATABASE_PASSWORD,
                 "database": DATABASE_NAME,
@@ -23,7 +23,9 @@ DB_CONFIG = {
     },
     "apps": {
         "models": {
-            "models": ["src.db.models"],
+            "models": [
+                "src.db.models"
+            ],  # Убедитесь, что ваши модели находятся в правильной директории
             "default_connection": "default",
         },
     },
@@ -32,8 +34,11 @@ DB_CONFIG = {
 
 
 async def init_db():
+    """Инициализация подключения и генерация схем."""
     await Tortoise.init(config=DB_CONFIG)
+    await Tortoise.generate_schemas()
 
 
 async def close():
+    """Закрытие подключения к базе данных."""
     await Tortoise.close_connections()

@@ -1,15 +1,19 @@
 import pymorphy3
+from tortoise.exceptions import DoesNotExist
 
 from src.db.models import SearchWord
 
 morph = pymorphy3.MorphAnalyzer()
 
 
-def get_keywords():
-    """Получить ключевые слова из базы данных.
-    Возвращается список лемматизированных ключевых слов.
-    """
-    return list(SearchWord.objects.values_list("lemma", flat=True))
+async def get_keywords():
+    """Получаем ключевые слова из базы данных с использованием Tortoise ORM."""
+    try:
+
+        keywords = await SearchWord.all().values("word", "lemma")
+        return keywords
+    except DoesNotExist:
+        return []
 
 
 def lemmatize_text(text):

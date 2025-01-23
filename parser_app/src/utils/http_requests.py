@@ -59,13 +59,18 @@ def parse_posts_from_html(html: str):
         return []
 
 
+logger = logging.getLogger(__name__)
+
+
 async def fetch_channel_data(url: str):
-    """Асинхронно получает HTML-код страницы канала."""
+    """Асинхронно получает HTML-код страницы канала с отключенной проверкой SSL-сертификатов."""
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
     }
     try:
-        async with httpx.AsyncClient(headers=headers, verify=False) as client:
+        async with httpx.AsyncClient(
+            headers=headers, verify=False, timeout=30
+        ) as client:
             response = await client.get(url)
             response.raise_for_status()
             return response.text

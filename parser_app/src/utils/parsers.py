@@ -1,25 +1,21 @@
-from src.utils.http_requests import get_channel_posts
-from src.utils.services import find_matches_in_text, get_keywords
+from src.utils.http_requests import fetch_channel_data, get_channel_posts
+from src.utils.services import get_keywords
 
 
-async def parse_and_match(channel_url):
-    """Парсит новости с Telegram-канала и ищет совпадения с ключевыми словами."""
-    # Получаем ключевые слова из базы данных
-    keywords = get_keywords()
-    if not keywords:
-        print("Ключевые слова не заданы!")
-        return
+async def parse_and_match(url: str):
+    print(f"Получаем данные с канала: {url}...")
+    html = await fetch_channel_data(url)
+    if html:
 
-    # Парсим новости с Telegram-канала
-    posts = await get_channel_posts(channel_url)
-    if not posts:
-        print("Не удалось получить данные с канала.")
-        return
+        posts = await get_channel_posts(url)
 
-    # Поиск совпадений в новостях
-    for post in posts:
-        matches = find_matches_in_text(post["text"], keywords)
-        if matches:
-            print(f"Совпадения в посте {post['post_id']}: {', '.join(matches)}")
-        else:
-            print(f"Совпадений не найдено в посте {post['post_id']}")
+        keywords = await get_keywords()
+
+        for post in posts:
+            for word, lemma in keywords:
+                if word in post["text"].lower() or (
+                    lemma and lemma in post["text"].lower()
+                ):
+                    print(
+                        f"Найдено совпадение: {word} или {lemma} в посте {post['post_id']}"
+                    )

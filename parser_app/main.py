@@ -1,40 +1,33 @@
-import asyncio
+import logging
 
-from src.utils.http_requests import get_channel_posts
-from src.utils.services import find_matches_in_text, get_keywords
+from tortoise import Tortoise, run_async
+
+from src.config.settings import DB_CONFIG
+from src.utils.parsers import parse_and_match
+
+channel_url = "https://t.me/s/sbbytoday"
 
 
-async def parse_and_match(channel_url: str):
-    """Получает посты с канала Telegram и ищет совпадения с ключевыми словами."""
-    print(f"Получаем данные с канала: {channel_url}...")
-    posts = await get_channel_posts(channel_url)
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
-    if not posts:
-        print("Не удалось получить данные с канала.")
-        return
 
-    print("Получаем ключевые слова из базы данных...")
-    keywords = get_keywords()
+async def init_db():
+    """Инициализация подключения к базе данных."""
+    try:
+        await Tortoise.init(config=DB_CONFIG)
 
-    if not keywords:
-        print("Нет ключевых слов для поиска.")
-        return
+        logger.info("Подключение к базе данных установлено успешно.")
 
-    print("Ищем совпадения в постах...")
-    for post in posts:
-        matches = find_matches_in_text(post["text"], keywords)
-        if matches:
-            print(f"Post ID: {post['post_id']}")
-            print(f"Совпадения: {', '.join(matches)}")
-            print("-" * 50)
-
-    print("Завершено.")
+    except Exception as e:
+        logger.error(f"Ошибка подключения к базе данных: {e}")
+        raise
 
 
 async def main():
-    channel_url = "https://t.me/s/sbbytoday"  # Укажите URL канала
+    await init_db()
     await parse_and_match(channel_url)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    run_async(main())
