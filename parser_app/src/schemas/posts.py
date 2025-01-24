@@ -1,17 +1,13 @@
+from datetime import UTC, datetime
 
 from pydantic import BaseModel
 
 
-class PostSchema(BaseModel):
+class PostData(BaseModel):
     post_id: int
     text: str
-
-    class Config:
-        from_attributes = True
+    published_at: str | None = datetime.now(UTC).isoformat()
 
 
 class PostsResponse(BaseModel):
-    posts: list[PostSchema]
-
-    class Config:
-        orm_mode = True
+    posts: list[PostData]

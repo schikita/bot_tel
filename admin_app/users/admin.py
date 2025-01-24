@@ -7,7 +7,7 @@ from .models import Admin, SearchWord
 class AdminAdmin(admin.ModelAdmin):
     list_display = ("telegram_id", "name", "created_at")
     search_fields = ("telegram_id", "name")
-    filter_horizontal = ("words",)
+    filter_horizontal = ("words", "channels")
 
 
 @admin.register(SearchWord)

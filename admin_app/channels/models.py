@@ -23,6 +23,13 @@ class Channel(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    next_parse_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        db_index=True,
+        auto_now_add=True,
+        verbose_name="Время начала следующего парсинга",
+    )
 
     def __str__(self):
         return self.name or self.url
@@ -45,19 +52,7 @@ class Post(models.Model):
         verbose_name="Дата добавления в БД",
     )
     published_at = models.DateTimeField(verbose_name="Дата публикации")
-    last_parsed_at = models.DateTimeField(
-        blank=True,
-        null=True,
-        auto_now_add=True,
-        verbose_name="Время последнего парсинга",
-    )
-    next_parse_at = models.DateTimeField(
-        blank=True,
-        null=True,
-        db_index=True,
-        auto_now_add=True,
-        verbose_name="Время начала следующего парсинга",
-    )
+
 
     class Meta:
         verbose_name = "Пост"

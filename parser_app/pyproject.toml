@@ -1,0 +1,19 @@
+[project]
+name = "parser-app"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "asyncpg>=0.30.0",
+    "beautifulsoup4>=4.12.3",
+    "httpx>=0.28.1",
+    "pydantic>=2.10.6",
+    "pymorphy3>=2.0.2",
+    "tortoise-orm>=0.24.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9.3",
+]

@@ -12,6 +12,9 @@ class Channel(Model):
     interval_minutes = fields.IntField(default=2)
     created_at = fields.DatetimeField(auto_now_add=True)
     updated_at = fields.DatetimeField(auto_now=True)
+    next_parse_at = fields.DatetimeField(null=True, db_index=True)
+
+    admins : fields.ManyToManyRelation["Admin"]
 
     class Meta:
         table = "channels_channel"
@@ -28,8 +31,6 @@ class Post(Model):
     text = fields.TextField(null=True, blank=True)
     created_at = fields.DatetimeField(auto_now_add=True)
     published_at = fields.DatetimeField(null=True)
-    last_parsed_at = fields.DatetimeField(null=True, auto_now_add=True)
-    next_parse_at = fields.DatetimeField(null=True, db_index=True)
 
     class Meta:
         table = "channels_post"
@@ -44,12 +45,16 @@ class Admin(Model):
     words = fields.ManyToManyField(
         "models.SearchWord",
         related_name="users_admin_searchwords",
-        through="admin_searchword",
+        through="users_admin_words",
+        forward_key="searchword_id",
+        backward_key="admin_id",
     )
     channels = fields.ManyToManyField(
         "models.Channel",
         related_name="admins",
         through="users_admin_channels",
+        forward_key="channel_id",
+        backward_key="admin_id",
     )
 
     class Meta:
@@ -61,21 +66,23 @@ class SearchWord(Model):
     word = fields.CharField(max_length=255, unique=True)
     lemma = fields.CharField(max_length=255, null=True, blank=True)
 
+    users_admin_searchwords: fields.ManyToManyRelation["Admin"]
+
     class Meta:
         table = "users_searchword"
 
 
 class AdminSearchWord(Model):
-    admin = fields.ForeignKeyField("models.Admin", on_delete=fields.CASCADE)
-    search_word = fields.ForeignKeyField("models.SearchWord", on_delete=fields.CASCADE)
+    admin_id = fields.ForeignKeyField("models.Admin", on_delete=fields.CASCADE)
+    searchword_id = fields.ForeignKeyField("models.SearchWord", on_delete=fields.CASCADE)
 
     class Meta:
-        table = "users_admin_searchwords"
+        table = "users_admin_words"
 
 
 class AdminChannel(Model):
-    admin = fields.ForeignKeyField("models.Admin", on_delete=fields.CASCADE)
-    channel = fields.ForeignKeyField("models.Channel", on_delete=fields.CASCADE)
+    admin_id = fields.ForeignKeyField("models.Admin", on_delete=fields.CASCADE)
+    channel_id = fields.ForeignKeyField("models.Channel", on_delete=fields.CASCADE)
 
     class Meta:
         table = "users_admin_channels"

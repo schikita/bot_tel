@@ -1,16 +1,13 @@
 import logging
 import re
-from typing import List, Optional
 
 import httpx
 from bs4 import BeautifulSoup
 
-from src.schemas.posts import PostSchema
+from src.schemas.posts import PostData
 
-# Логирование
 logger = logging.getLogger(__name__)
 
-# Регулярные выражения для очистки текста
 EMOJI_PATTERN = re.compile(
     r"[\U00010000-\U0010FFFF]|[\u2705\u274C\u26A1\u25B6\u2794\u267B\u2757]",
     flags=re.UNICODE,
@@ -44,6 +41,7 @@ async def fetch_channel_data(url: str) -> str | None:
         async with httpx.AsyncClient(
             headers=headers,
             verify=False,
+            follow_redirects=True,
             timeout=30,
         ) as client:
             response = await client.get(url)
@@ -54,9 +52,10 @@ async def fetch_channel_data(url: str) -> str | None:
         return None
 
 
-async def get_channel_posts(url: str) -> list[PostSchema]:
+async def get_channel_posts(url: str) -> list[PostData]:
     """Получает список постов с Telegram-канала."""
     if not url.startswith("https://t.me/"):
+        logger.warning(f"Ссылка не подходящая под нужный формат: {url}")
         return []
 
     if html := await fetch_channel_data(url):
@@ -65,7 +64,7 @@ async def get_channel_posts(url: str) -> list[PostSchema]:
     return []
 
 
-def parse_posts_from_html(html: str) -> list[PostSchema]:
+def parse_posts_from_html(html: str) -> list[PostData]:
     """Парсит HTML-код страницы канала и извлекает посты."""
     try:
         soup = BeautifulSoup(html, "html.parser")
@@ -77,7 +76,7 @@ def parse_posts_from_html(html: str) -> list[PostSchema]:
 
             raw_text = _extract_raw_text(post_div)
             if cleaned_text := clean_text(raw_text) if raw_text else None:
-                posts.append(PostSchema(post_id=post_id, text=cleaned_text))
+                posts.append(PostData(post_id=int(post_id), text=cleaned_text))
         return posts
 
     except Exception as e:
@@ -85,7 +84,7 @@ def parse_posts_from_html(html: str) -> list[PostSchema]:
         return []
 
 
-def _extract_raw_text(post_element) -> Optional[str]:
+def _extract_raw_text(post_element) -> str | None:
     """Извлекает сырой текст из элемента поста."""
     if text_container := post_element.find("div", class_="tgme_widget_message_bubble"):
         return text_container.get_text(strip=True)

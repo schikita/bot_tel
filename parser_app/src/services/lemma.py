@@ -1,23 +1,30 @@
-from typing import Set
+from functools import lru_cache
 
 import pymorphy3
 
+
+class LemmaService:
+    def __init__(self, morph: pymorphy3.MorphAnalyzer) -> None:
+        self.morph = morph or pymorphy3.MorphAnalyzer()
+
+    @lru_cache(maxsize=10_000)
+    def lemmatize_word(self, word: str) -> str:
+        """Лемматизация слова."""
+        return self.morph.parse(word)[0].normal_form
+
+    def lemmatize_text(self, text: str) -> set[str]:
+        """Лемматизация текста.
+        Разделяет текст на слова и возвращает множество лемм.
+        """
+        words = text.split()
+        return {self.lemmatize_word(word) for word in words}
+
+    def find_matches_in_text(self, text: str, keywords: set[str]) -> set[str]:
+        """Ищет совпадения ключевых слов в тексте."""
+        lemmatized_text = self.lemmatize_text(text)
+        return lemmatized_text.intersection(keywords)
+
 morph = pymorphy3.MorphAnalyzer()
+lemma_service = LemmaService(morph)
 
 
-def lemmatize_word(word: str) -> str:
-    """Лемматизация слова."""
-    return morph.parse(word)[0].normal_form
-
-def lemmatize_text(text: str) -> Set[str]:
-    """Лемматизация текста.
-    Разделяет текст на слова и возвращает множество лемм.
-    """
-    words = text.split()
-    return {lemmatize_word(word) for word in words}
-
-
-def find_matches_in_text(text: str, keywords: Set[str]) -> Set[str]:
-    """Ищет совпадения ключевых слов в тексте."""
-    lemmatized_text = lemmatize_text(text)
-    return lemmatized_text.intersection(keywords)
