@@ -1,12 +1,16 @@
 import logging
 import re
+from typing import List, Optional
 
 import httpx
 from bs4 import BeautifulSoup
 
+from src.schemas.posts import PostSchema
+
+# Логирование
 logger = logging.getLogger(__name__)
 
-
+# Регулярные выражения для очистки текста
 EMOJI_PATTERN = re.compile(
     r"[\U00010000-\U0010FFFF]|[\u2705\u274C\u26A1\u25B6\u2794\u267B\u2757]",
     flags=re.UNICODE,
@@ -31,7 +35,35 @@ def extract_numeric_post_id(post_id: str) -> str:
     return match.group(1) if match else post_id
 
 
-def parse_posts_from_html(html: str):
+async def fetch_channel_data(url: str) -> Optional[str]:
+    """Асинхронно получает HTML-код страницы канала с отключенной проверкой SSL-сертификатов."""
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+    }
+    try:
+        async with httpx.AsyncClient(
+            headers=headers,
+            verify=False,
+            timeout=30,
+        ) as client:
+            response = await client.get(url)
+            response.raise_for_status()
+            return response.text
+    except httpx.RequestError as e:
+        logger.error(f"Ошибка при запросе {url}: {e}")
+        return None
+
+
+async def get_channel_posts(url: str) -> List[PostSchema]:
+    """Получает список постов с Telegram-канала."""
+    html = await fetch_channel_data(url)
+    if html:
+        posts = parse_posts_from_html(html)
+        return posts
+    return []
+
+
+def parse_posts_from_html(html: str) -> List[PostSchema]:
     """Парсит HTML-код страницы канала и извлекает посты."""
     try:
         soup = BeautifulSoup(html, "html.parser")
@@ -50,39 +82,14 @@ def parse_posts_from_html(html: str):
                 cleaned_text = clean_text(post_text)
 
                 if cleaned_text:
-                    posts.append({"post_id": post_id, "text": cleaned_text})
+                    # Создаем экземпляр Pydantic модели для каждого поста
+                    posts.append(PostSchema(post_id=post_id, text=cleaned_text))
 
-        unique_posts = {post["post_id"]: post for post in posts}.values()
+        # Используем set для удаления дубликатов по post_id
+        unique_posts = {post.post_id: post for post in posts}.values()
+
         return list(unique_posts)
+
     except Exception as e:
         logger.error(f"Ошибка при парсинге HTML: {e}")
         return []
-
-
-logger = logging.getLogger(__name__)
-
-
-async def fetch_channel_data(url: str):
-    """Асинхронно получает HTML-код страницы канала с отключенной проверкой SSL-сертификатов."""
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-    }
-    try:
-        async with httpx.AsyncClient(
-            headers=headers, verify=False, timeout=30
-        ) as client:
-            response = await client.get(url)
-            response.raise_for_status()
-            return response.text
-    except httpx.RequestError as e:
-        logger.error(f"Ошибка при запросе {url}: {e}")
-        return None
-
-
-async def get_channel_posts(url: str):
-    """Получает список постов с Telegram-канала."""
-    html = await fetch_channel_data(url)
-    if html:
-        posts = parse_posts_from_html(html)
-        return posts
-    return []

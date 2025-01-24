@@ -24,8 +24,8 @@ DB_CONFIG = {
     "apps": {
         "models": {
             "models": [
-                "src.db.models"
-            ],  # Убедитесь, что ваши модели находятся в правильной директории
+                "src.db.models",
+            ],
             "default_connection": "default",
         },
     },

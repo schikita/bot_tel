@@ -3,7 +3,7 @@ import logging
 from tortoise import Tortoise, run_async
 
 from src.config.settings import DB_CONFIG
-from src.utils.parsers import parse_and_match
+from src.services.parsers import parse_and_match
 
 channel_url = "https://t.me/s/sbbytoday"
 

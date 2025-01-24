@@ -1,5 +1,5 @@
+from src.services.db import get_keywords
 from src.utils.http_requests import fetch_channel_data, get_channel_posts
-from src.utils.services import get_keywords
 
 
 async def parse_and_match(url: str):
@@ -17,5 +17,5 @@ async def parse_and_match(url: str):
                     lemma and lemma in post["text"].lower()
                 ):
                     print(
-                        f"Найдено совпадение: {word} или {lemma} в посте {post['post_id']}"
+                        f"Найдено совпадение: {word} или {lemma} в посте {post['post_id']}",
                     )
