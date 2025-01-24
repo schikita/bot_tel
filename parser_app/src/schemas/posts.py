@@ -1,4 +1,3 @@
-from typing import List
 
 from pydantic import BaseModel
 
@@ -12,7 +11,7 @@ class PostSchema(BaseModel):
 
 
 class PostsResponse(BaseModel):
-    posts: List[PostSchema]
+    posts: list[PostSchema]
 
     class Config:
         orm_mode = True
