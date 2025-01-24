@@ -35,7 +35,7 @@ def extract_numeric_post_id(post_id: str) -> str:
     return match.group(1) if match else post_id
 
 
-async def fetch_channel_data(url: str) -> Optional[str]:
+async def fetch_channel_data(url: str) -> str | None:
     """Асинхронно получает HTML-код страницы канала с отключенной проверкой SSL-сертификатов."""
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
@@ -54,16 +54,18 @@ async def fetch_channel_data(url: str) -> Optional[str]:
         return None
 
 
-async def get_channel_posts(url: str) -> List[PostSchema]:
+async def get_channel_posts(url: str) -> list[PostSchema]:
     """Получает список постов с Telegram-канала."""
-    html = await fetch_channel_data(url)
-    if html:
-        posts = parse_posts_from_html(html)
-        return posts
+    if not url.startswith("https://t.me/"):
+        return []
+
+    if html := await fetch_channel_data(url):
+        return parse_posts_from_html(html)
+
     return []
 
 
-def parse_posts_from_html(html: str) -> List[PostSchema]:
+def parse_posts_from_html(html: str) -> list[PostSchema]:
     """Парсит HTML-код страницы канала и извлекает посты."""
     try:
         soup = BeautifulSoup(html, "html.parser")
