@@ -15,7 +15,7 @@ class Channel(Model):
     updated_at = fields.DatetimeField(auto_now=True)
 
     class Meta:
-        table_name = "channels_channel"
+        table = "channels_channel"
 
 
 class Post(Model):
@@ -33,7 +33,7 @@ class Post(Model):
     next_parse_at = fields.DatetimeField(null=True, db_index=True)
 
     class Meta:
-        table_name = "channels_post"
+        table = "channels_post"
         unique_together = ("post_id", "channel")
 
 
@@ -54,7 +54,7 @@ class Admin(Model):
     )
 
     class Meta:
-        table_name = "users_admin"
+        table = "users_admin"
 
 
 class SearchWord(Model):
@@ -63,7 +63,7 @@ class SearchWord(Model):
     lemma = fields.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
-        table_name = "users_searchword"
+        table = "users_searchword"
 
 
 async def add_or_update_keyword(word: str):
@@ -85,7 +85,7 @@ class AdminSearchWord(Model):
     search_word = fields.ForeignKeyField("models.SearchWord", on_delete=fields.CASCADE)
 
     class Meta:
-        table_name = "users_admin_searchwords"
+        table = "users_admin_searchwords"
 
 
 class AdminChannel(Model):
@@ -93,7 +93,7 @@ class AdminChannel(Model):
     channel = fields.ForeignKeyField("models.Channel", on_delete=fields.CASCADE)
 
     class Meta:
-        table_name = "users_admin_channels"
+        table = "users_admin_channels"
 
 
 morph = MorphAnalyzer()
@@ -102,6 +102,12 @@ morph = MorphAnalyzer()
 async def get_keywords():
     """Получить все ключевые слова и их леммы из базы данных."""
     keywords = await SearchWord.all().values_list("word", "lemma")
+    print(keywords)
+    print(keywords)
+    print(keywords)
+    print(keywords)
+    print(keywords)
+    print(keywords)
     return keywords
 
 

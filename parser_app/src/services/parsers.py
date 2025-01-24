@@ -10,12 +10,16 @@ async def parse_and_match(url: str):
         posts = await get_channel_posts(url)
 
         keywords = await get_keywords()
+        print(keywords)
+        print(keywords)
 
         for post in posts:
             for word, lemma in keywords:
-                if word in post["text"].lower() or (
-                    lemma and lemma in post["text"].lower()
+                if word in post.text.lower() or (
+                    lemma and lemma in post.text.lower()
                 ):
                     print(
-                        f"Найдено совпадение: {word} или {lemma} в посте {post['post_id']}",
+                        f"Найдено совпадение: {word} или {lemma} в посте {post.post_id}",
                     )
+                else:
+                    print(f"Совпадений не найдено в посте {post.post_id} для {word} в {lemma}" )
