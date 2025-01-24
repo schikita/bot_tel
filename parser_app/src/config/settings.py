@@ -2,8 +2,8 @@ from tortoise import Tortoise
 
 DATABASE_HOST = "localhost"
 DATABASE_PORT = 5432
-DATABASE_USER = "ser"
-DATABASE_PASSWORD = "1234"
+DATABASE_USER = "postgres"
+DATABASE_PASSWORD = ""
 DATABASE_NAME = "db_bot_teleg"
 TIMEZONE = "UTC"
 
