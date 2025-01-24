@@ -70,26 +70,21 @@ def parse_posts_from_html(html: str) -> List[PostSchema]:
         posts = []
 
         for post_div in soup.find_all("div", {"class": "tgme_widget_message"}):
-            # Извлечение Post ID
-            post_id_raw = post_div.get("data-post")
-            post_id = extract_numeric_post_id(post_id_raw) if post_id_raw else None
-            if not post_id:
+            if not (post_id := extract_numeric_post_id(post_div.get("data-post", ""))):
                 continue
 
-            post_bubble = post_div.find("div", {"class": "tgme_widget_message_bubble"})
-            if post_bubble:
-                post_text = post_bubble.get_text(strip=True)
-                cleaned_text = clean_text(post_text)
-
-                if cleaned_text:
-                    # Создаем экземпляр Pydantic модели для каждого поста
-                    posts.append(PostSchema(post_id=post_id, text=cleaned_text))
-
-        # Используем set для удаления дубликатов по post_id
-        unique_posts = {post.post_id: post for post in posts}.values()
-
-        return list(unique_posts)
+            raw_text = _extract_raw_text(post_div)
+            if cleaned_text := clean_text(raw_text) if raw_text else None:
+                posts.append(PostSchema(post_id=post_id, text=cleaned_text))
+        return posts
 
     except Exception as e:
         logger.error(f"Ошибка при парсинге HTML: {e}")
         return []
+
+
+def _extract_raw_text(post_element) -> Optional[str]:
+    """Извлекает сырой текст из элемента поста."""
+    if text_container := post_element.find("div", class_="tgme_widget_message_bubble"):
+        return text_container.get_text(strip=True)
+    return None
