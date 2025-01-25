@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import logging
 import re
 
 import httpx
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, ResultSet
 
 from src.schemas.posts import PostData
 
@@ -33,14 +35,13 @@ def extract_numeric_post_id(post_id: str) -> str:
 
 
 async def fetch_channel_data(url: str) -> str | None:
-    """Асинхронно получает HTML-код страницы канала с отключенной проверкой SSL-сертификатов."""
+    """Асинхронно получает HTML-код страницы канала."""
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
     }
     try:
         async with httpx.AsyncClient(
             headers=headers,
-            verify=False,
             follow_redirects=True,
             timeout=30,
         ) as client:
@@ -84,7 +85,7 @@ def parse_posts_from_html(html: str) -> list[PostData]:
         return []
 
 
-def _extract_raw_text(post_element) -> str | None:
+def _extract_raw_text(post_element: ResultSet) -> str | None:
     """Извлекает сырой текст из элемента поста."""
     if text_container := post_element.find("div", class_="tgme_widget_message_bubble"):
         return text_container.get_text(strip=True)

@@ -7,6 +7,8 @@ DATABASE_PASSWORD = ""
 DATABASE_NAME = "db_bot_teleg"
 TIMEZONE = "UTC"
 
+TELEGRAM_BOT_TOKEN = "1869894953:AAG4YEXnaKWE7lSBgbecvRcBWIasyiY4o0U"
+
 DB_CONFIG = {
     "connections": {
         "default": {

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import UTC, datetime
 
 from src.db.models import Channel, Post
@@ -5,11 +7,9 @@ from src.db.models import Channel, Post
 
 class PostRepository:
     @staticmethod
-    async def exists_post(channel: Channel, post_id: int) -> bool:
-        return await Post.exists(channel=channel, post_id=post_id)
-
-    @staticmethod
-    async def create_post(channel: Channel, post_id: int, text: str, published_at) -> Post:
+    async def create_post(
+        channel: Channel, post_id: int, text: str, published_at,
+    ) -> Post:
         return await Post.create(
             channel=channel,
             post_id=post_id,
@@ -19,5 +19,5 @@ class PostRepository:
         )
 
     @staticmethod
-    async def post_exists(channel: Channel, post_id: int) -> Post:
-        return await Post.get(channel=channel, post_id=post_id)
+    async def is_post_exists(channel: Channel, post_id: int) -> bool:
+        return await Post.exists(channel=channel, post_id=post_id)

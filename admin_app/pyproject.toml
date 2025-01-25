@@ -8,3 +8,8 @@ dependencies = [
     "django>=5.1.5",
     "psycopg[binary,pool]>=3.2.4",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9.3",
+]

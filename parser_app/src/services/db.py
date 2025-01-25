@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from src.db.models import SearchWord
 from src.services.lemma import lemma_service
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import UTC, datetime, timedelta
 
 from src.db.models import Channel
@@ -14,6 +16,6 @@ class ChannelRepository:
         return not channel.next_parse_at or channel.next_parse_at < datetime.now(UTC)
 
     @staticmethod
-    async def set_next_parse_time(channel: Channel):
-        channel.next_parse_at = datetime.now(UTC) + timedelta(minutes=channel.interval_minutes)
-        await channel.save()
+    async def set_next_parse_time(channel: Channel) -> None:
+        next_parse = datetime.now(UTC) + timedelta(minutes=channel.interval_minutes)
+        await Channel.filter(id=channel.id).update(next_parse_at=next_parse)

@@ -2,8 +2,8 @@ import uuid
 
 from django.core.validators import MinLengthValidator
 from django.db import models
-
-
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 class Admin(models.Model):
     """Модель для администраторов."""
 
@@ -12,6 +12,7 @@ class Admin(models.Model):
         max_length=255,
         unique=True,
         verbose_name="Telegram ID",
+        help_text="ID пользователя в Telegram. Например, 1234567890, можно узнать у @userinfobot",
     )
     name = models.CharField(
         max_length=255,
@@ -33,6 +34,10 @@ class Admin(models.Model):
         verbose_name="Каналы, на которые подписан администратор",
     )
 
+    class Meta:
+        verbose_name = "Администратор"
+        verbose_name_plural = "Администраторы"
+
     def __str__(self):
         return self.name or self.telegram_id
 
@@ -53,8 +58,17 @@ class SearchWord(models.Model):
         verbose_name="Лемма слова",
     )
 
-    def save(self, *args, **kwargs):
+    def clean(self):
         self.word = self.word.lower()
+
+        if len(self.word) < 2:
+            raise ValidationError({"word": _("Ключевое слово должно содержать минимум 2 символа.")})
+
+        if SearchWord.objects.filter(word__iexact=self.word).exclude(pk=self.pk).exists():
+            raise ValidationError({"word": _(f"Слово {self.word} уже существует.")})
+            
+    def save(self, *args, **kwargs):
+        self.full_clean()
         super().save(*args, **kwargs)
 
     class Meta:

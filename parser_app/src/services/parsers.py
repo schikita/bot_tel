@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import asyncio
 
 from src.db.models import Channel
 from src.repositories.admin_repository import AdminRepository
@@ -10,11 +13,22 @@ from src.utils.http_requests import get_channel_posts
 
 
 class ChannelParserService:
+    _semaphore = asyncio.Semaphore(50)
+
     @staticmethod
     async def parse_all_channels() -> None:
         """Запускает парсинг всех активных каналов."""
         channels = await ChannelRepository.fetch_active_channels()
-        for channel in channels:
+        tasks = [
+            ChannelParserService._process_channel_safe(channel)
+            for channel in channels
+        ]
+
+        await asyncio.gather(*tasks)
+
+    @staticmethod
+    async def _process_channel_safe(channel: Channel) -> None:
+        async with ChannelParserService._semaphore:
             if await ChannelRepository.is_due_for_parsing(channel):
                 await ChannelParserService.process_channel_posts(channel)
 
@@ -32,7 +46,7 @@ class ChannelParserService:
 
     @staticmethod
     async def _process_single_post(channel: Channel, post_data: PostData) -> None:
-        if await PostRepository.post_exists(channel, post_data.post_id):
+        if await PostRepository.is_post_exists(channel, post_data.post_id):
             return
 
         await PostRepository.create_post(
@@ -42,11 +56,14 @@ class ChannelParserService:
             published_at=post_data.published_at,
         )
 
-        post_lemmas = lemma_service.lemmatize_text(post_data.text)
-
         for admin in await AdminRepository.get_subscribed_admins(channel):
-            admin_lemmas = {word.lemma or lemma_service.lemmatize_word(word.word) for word in admin.words}
-            matched_lemmas = post_lemmas.intersection(admin_lemmas)
+            admin_lemmas = {
+                word.lemma or lemma_service.lemmatize_word(word.word)
+                for word in admin.words
+            }
+            matched_lemmas = lemma_service.find_matches_in_text(
+                post_data.text, admin_lemmas,
+            )
 
             if matched_lemmas:
                 await NotificationService.notify_admin(
