@@ -13,7 +13,7 @@ from src.utils.http_requests import get_channel_posts
 
 
 class ChannelParserService:
-    _semaphore = asyncio.Semaphore(50)
+    _semaphore = asyncio.Semaphore(40)
 
     @staticmethod
     async def parse_all_channels() -> None:
