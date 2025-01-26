@@ -15,5 +15,6 @@ async def main():
         await ChannelParserService.parse_all_channels()
         await asyncio.sleep(5)
 
+
 if __name__ == "__main__":
     asyncio.run(main())

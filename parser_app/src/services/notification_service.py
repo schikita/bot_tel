@@ -8,7 +8,9 @@ from src.db.models import Admin, Channel
 
 class NotificationService:
     @staticmethod
-    async def notify_admin(admin: Admin, post_id: int, channel: Channel, matched_keywords: set[str]):
+    async def notify_admin(
+        admin: Admin, post_id: int, channel: Channel, matched_keywords: set[str]
+    ):
         channel_str = f"{channel.name} ({channel.url})" if channel.name else channel.url
         text = (
             f"Найден пост на канале: {channel_str}\n"

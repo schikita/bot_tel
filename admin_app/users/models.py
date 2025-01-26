@@ -1,9 +1,11 @@
 import uuid
 
+from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+
+
 class Admin(models.Model):
     """Модель для администраторов."""
 
@@ -62,11 +64,17 @@ class SearchWord(models.Model):
         self.word = self.word.lower()
 
         if len(self.word) < 2:
-            raise ValidationError({"word": _("Ключевое слово должно содержать минимум 2 символа.")})
+            raise ValidationError(
+                {"word": _("Ключевое слово должно содержать минимум 2 символа.")}
+            )
 
-        if SearchWord.objects.filter(word__iexact=self.word).exclude(pk=self.pk).exists():
+        if (
+            SearchWord.objects.filter(word__iexact=self.word)
+            .exclude(pk=self.pk)
+            .exists()
+        ):
             raise ValidationError({"word": _(f"Слово {self.word} уже существует.")})
-            
+
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)

@@ -14,7 +14,6 @@ class AdminAdmin(admin.ModelAdmin):
 
     words_list.short_description = "Ключевые слова (Превью 5шт)"
 
-
     fieldsets = (
         (
             "Основная информация",

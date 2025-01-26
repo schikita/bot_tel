@@ -18,12 +18,12 @@ def channel_url_validator(value) -> None:
 
     if not value.startswith("https://t.me/s/"):
         raise ValidationError(
-            _("Неверный формат ссылки на канал, ожидается https://t.me/s/<username>")
+            _("Неверный формат ссылки на канал, ожидается https://t.me/s/<username>"),
         )
 
     if len(value.split("/")) < 3 or not value.split("/")[4]:
         raise ValidationError(
-            _("Неверный формат ссылки на канал, ожидается https://t.me/s/<username>")
+            _("Неверный формат ссылки на канал, ожидается https://t.me/s/<username>"),
         )
 
 

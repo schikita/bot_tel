@@ -14,7 +14,7 @@ class Channel(Model):
     updated_at = fields.DatetimeField(auto_now=True)
     next_parse_at = fields.DatetimeField(null=True, db_index=True)
 
-    admins : fields.ManyToManyRelation["Admin"]
+    admins: fields.ManyToManyRelation["Admin"]
 
     class Meta:
         table = "channels_channel"
@@ -74,7 +74,9 @@ class SearchWord(Model):
 
 class AdminSearchWord(Model):
     admin_id = fields.ForeignKeyField("models.Admin", on_delete=fields.CASCADE)
-    searchword_id = fields.ForeignKeyField("models.SearchWord", on_delete=fields.CASCADE)
+    searchword_id = fields.ForeignKeyField(
+        "models.SearchWord", on_delete=fields.CASCADE
+    )
 
     class Meta:
         table = "users_admin_words"

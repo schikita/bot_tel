@@ -8,7 +8,10 @@ from src.db.models import Channel, Post
 class PostRepository:
     @staticmethod
     async def create_post(
-        channel: Channel, post_id: int, text: str, published_at,
+        channel: Channel,
+        post_id: int,
+        text: str,
+        published_at,
     ) -> Post:
         return await Post.create(
             channel=channel,

@@ -35,4 +35,3 @@ class SearchWordService:
     @staticmethod
     async def get_lemma(word: str) -> str:
         return lemma_service.lemmatize_word(word)
-

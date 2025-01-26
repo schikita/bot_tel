@@ -26,7 +26,6 @@ class LemmaService:
         lemmatized_text = self.lemmatize_text(text)
         return lemmatized_text.intersection(keywords)
 
+
 morph = pymorphy3.MorphAnalyzer()
 lemma_service = LemmaService(morph)
-
-

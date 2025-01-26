@@ -20,8 +20,7 @@ class ChannelParserService:
         """Запускает парсинг всех активных каналов."""
         channels = await ChannelRepository.fetch_active_channels()
         tasks = [
-            ChannelParserService._process_channel_safe(channel)
-            for channel in channels
+            ChannelParserService._process_channel_safe(channel) for channel in channels
         ]
 
         await asyncio.gather(*tasks)
@@ -62,7 +61,8 @@ class ChannelParserService:
                 for word in admin.words
             }
             matched_lemmas = lemma_service.find_matches_in_text(
-                post_data.text, admin_lemmas,
+                post_data.text,
+                admin_lemmas,
             )
 
             if matched_lemmas:
