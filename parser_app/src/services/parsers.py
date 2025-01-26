@@ -26,12 +26,6 @@ class ChannelParserService:
         await asyncio.gather(*tasks)
 
     @staticmethod
-    async def _process_channel_safe(channel: Channel) -> None:
-        async with ChannelParserService._semaphore:
-            if await ChannelRepository.is_due_for_parsing(channel):
-                await ChannelParserService.process_channel_posts(channel)
-
-    @staticmethod
     async def process_channel_posts(channel: Channel) -> None:
         """Парсит один канал и обрабатывает посты."""
         posts_data: list[PostData] = await get_channel_posts(channel.url)
@@ -42,6 +36,12 @@ class ChannelParserService:
             await ChannelParserService._process_single_post(channel, post_data)
 
         await ChannelRepository.set_next_parse_time(channel)
+
+    @staticmethod
+    async def _process_channel_safe(channel: Channel) -> None:
+        async with ChannelParserService._semaphore:
+            if await ChannelRepository.is_due_for_parsing(channel):
+                await ChannelParserService.process_channel_posts(channel)
 
     @staticmethod
     async def _process_single_post(channel: Channel, post_data: PostData) -> None:
