@@ -5,7 +5,6 @@ import re
 
 import httpx
 from bs4 import BeautifulSoup, ResultSet
-
 from src.schemas.posts import PostData
 
 logger = logging.getLogger(__name__)
@@ -43,6 +42,7 @@ async def fetch_channel_data(url: str) -> str | None:
         async with httpx.AsyncClient(
             headers=headers,
             follow_redirects=True,
+            verify=False,
             timeout=30,
         ) as client:
             response = await client.get(url)
@@ -76,8 +76,10 @@ def parse_posts_from_html(html: str) -> list[PostData]:
                 continue
 
             raw_text = _extract_raw_text(post_div)
-            if cleaned_text := clean_text(raw_text) if raw_text else None:
+            if raw_text:
+                cleaned_text = clean_text(raw_text)
                 posts.append(PostData(post_id=int(post_id), text=cleaned_text))
+
         return posts
 
     except Exception as e:
@@ -85,8 +87,19 @@ def parse_posts_from_html(html: str) -> list[PostData]:
         return []
 
 
+
 def _extract_raw_text(post_element: ResultSet) -> str | None:
-    """Извлекает сырой текст из элемента поста."""
+    """Извлекает сырой текст из элемента поста, корректно обрабатывая разрывы строк и удаляя ненужные элементы."""
     if text_container := post_element.find("div", class_="tgme_widget_message_bubble"):
-        return text_container.get_text(strip=True)
+        for br in text_container.find_all("br"):
+            br.replace_with(" ")
+
+        for tag in text_container.find_all(["mark", "b", "i", "u", "strong"]):
+            tag.unwrap()
+
+        for unwanted in text_container.find_all(["tg-emoji", "picture", "span"]):
+            unwanted.decompose()
+
+        return text_container.get_text(" ", strip=True)
+
     return None
