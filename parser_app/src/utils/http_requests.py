@@ -20,6 +20,14 @@ UNWANTED_CONTENT_PATTERN = re.compile(
     flags=re.IGNORECASE,
 )
 
+def preprocess_text(text: str) -> str:
+    """Предобработка текста: добавление пробелов после знаков препинания и очистка."""
+    """text = re.sub(r'\s*([.,!?;])\s*', r'\1 ', text)
+    text = text.strip()
+    text = re.sub(r'([.,!?;])', r'\1 ', text)
+    text = re.sub(r'(SB\.BY|Беларусь)', r'\1\n', text)"""
+    return text
+
 
 def clean_text(text: str) -> str:
     """Убирает эмодзи, нежелательные строки и лишние пробелы из текста."""
@@ -43,6 +51,7 @@ async def fetch_channel_data(url: str) -> str | None:
         async with httpx.AsyncClient(
             headers=headers,
             follow_redirects=True,
+            verify=False,
             timeout=30,
         ) as client:
             response = await client.get(url)
@@ -76,7 +85,8 @@ def parse_posts_from_html(html: str) -> list[PostData]:
                 continue
 
             raw_text = _extract_raw_text(post_div)
-            if cleaned_text := clean_text(raw_text) if raw_text else None:
+            if raw_text:
+                cleaned_text = preprocess_text(clean_text(raw_text))
                 posts.append(PostData(post_id=int(post_id), text=cleaned_text))
         return posts
 
@@ -86,7 +96,17 @@ def parse_posts_from_html(html: str) -> list[PostData]:
 
 
 def _extract_raw_text(post_element: ResultSet) -> str | None:
-    """Извлекает сырой текст из элемента поста."""
-    if text_container := post_element.find("div", class_="tgme_widget_message_bubble"):
-        return text_container.get_text(strip=True)
+    """Извлекает сырой текст из элемента поста, корректно обрабатывая разрывы строк и удаляя ненужные элементы."""
+    if text_container := post_element.find("div", class_="tgme_widget_message_bubble"):        
+        for br in text_container.find_all("br"):
+            br.replace_with(" ")
+        
+        for tag in text_container.find_all(["mark", "b", "i", "u", "strong"]):
+            tag.unwrap() 
+        
+        for unwanted in text_container.find_all(["tg-emoji", "picture", "span"]):
+            unwanted.decompose()
+
+        return text_container.get_text(" ", strip=True)
+
     return None

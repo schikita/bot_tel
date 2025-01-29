@@ -1,7 +1,4 @@
-from __future__ import annotations
-
 import asyncio
-
 from src.db.models import Channel
 from src.repositories.admin_repository import AdminRepository
 from src.repositories.channel_repository import ChannelRepository
@@ -10,7 +7,6 @@ from src.schemas.posts import PostData
 from src.services.lemma import lemma_service
 from src.services.notification_service import NotificationService
 from src.utils.http_requests import get_channel_posts
-
 
 class ChannelParserService:
     _semaphore = asyncio.Semaphore(40)
@@ -60,15 +56,21 @@ class ChannelParserService:
                 word.lemma or lemma_service.lemmatize_word(word.word)
                 for word in admin.words
             }
-            matched_lemmas = lemma_service.find_matches_in_text(
-                post_data.text,
-                admin_lemmas,
-            )
 
-            if matched_lemmas:
+            post_bigrams = lemma_service.generate_phrases(post_data.text, n=2)
+            post_trigrams = lemma_service.generate_phrases(post_data.text, n=3)
+            
+            matched_lemmas = lemma_service.find_matches_in_text(post_data.text, admin_lemmas)
+
+            matched_bigrams = {bigram for bigram in post_bigrams if bigram in admin_lemmas}
+            matched_trigrams = {trigram for trigram in post_trigrams if trigram in admin_lemmas}
+
+            all_matches = matched_lemmas.union(matched_bigrams).union(matched_trigrams)
+
+            if all_matches:
                 await NotificationService.notify_admin(
                     admin=admin,
                     post_id=post_data.post_id,
                     channel=channel,
-                    matched_keywords=matched_lemmas,
+                    matched_keywords=all_matches,
                 )
