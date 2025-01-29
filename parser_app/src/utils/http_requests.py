@@ -5,7 +5,6 @@ import re
 
 import httpx
 from bs4 import BeautifulSoup, ResultSet
-
 from src.schemas.posts import PostData
 
 logger = logging.getLogger(__name__)
@@ -22,10 +21,10 @@ UNWANTED_CONTENT_PATTERN = re.compile(
 
 def preprocess_text(text: str) -> str:
     """Предобработка текста: добавление пробелов после знаков препинания и очистка."""
-    """text = re.sub(r'\s*([.,!?;])\s*', r'\1 ', text)
+    """text = re.sub(r'\\s*([.,!?;])\\s*', r'\1 ', text)
     text = text.strip()
     text = re.sub(r'([.,!?;])', r'\1 ', text)
-    text = re.sub(r'(SB\.BY|Беларусь)', r'\1\n', text)"""
+    text = re.sub(r'(SB\\.BY|Беларусь)', r'\1\n', text)"""
     return text
 
 
@@ -97,13 +96,13 @@ def parse_posts_from_html(html: str) -> list[PostData]:
 
 def _extract_raw_text(post_element: ResultSet) -> str | None:
     """Извлекает сырой текст из элемента поста, корректно обрабатывая разрывы строк и удаляя ненужные элементы."""
-    if text_container := post_element.find("div", class_="tgme_widget_message_bubble"):        
+    if text_container := post_element.find("div", class_="tgme_widget_message_bubble"):
         for br in text_container.find_all("br"):
             br.replace_with(" ")
-        
+
         for tag in text_container.find_all(["mark", "b", "i", "u", "strong"]):
-            tag.unwrap() 
-        
+            tag.unwrap()
+
         for unwanted in text_container.find_all(["tg-emoji", "picture", "span"]):
             unwanted.decompose()
 

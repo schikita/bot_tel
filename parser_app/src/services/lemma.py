@@ -9,7 +9,7 @@ class LemmaService:
 
     @lru_cache(maxsize=10_000)
     def lemmatize_word(self, word: str) -> str:
-        """Лемматизация слова (простейшая версия)."""        
+        """Лемматизация слова (простейшая версия)."""
         return word.lower()
 
     def lemmatize_text(self, text: str) -> set[str]:
@@ -23,7 +23,7 @@ class LemmaService:
         phrases = set()
 
         for i in range(len(words) - n + 1):
-            phrase = ' '.join(words[i:i + n])
+            phrase = " ".join(words[i:i + n])
             phrases.add(phrase)
 
         return phrases
