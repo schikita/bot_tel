@@ -14,17 +14,30 @@ class LemmaService:
         """Лемматизация слова."""
         return self.morph.parse(word)[0].normal_form
 
-    def lemmatize_text(self, text: str) -> set[str]:
+    def lemmatize_text(self, text: str) -> list[str]:
         """Лемматизация текста.
         Разделяет текст на слова и возвращает множество лемм.
         """
         words = text.split()
-        return {self.lemmatize_word(word) for word in words}
+        return [self.lemmatize_word(word) for word in words]
 
     def find_matches_in_text(self, text: str, keywords: set[str]) -> set[str]:
         """Ищет совпадения ключевых слов в тексте."""
         lemmatized_text = self.lemmatize_text(text)
-        return lemmatized_text.intersection(keywords)
+        matches = set()
+
+        for keyword in keywords:
+            keyword_words = keyword.split()
+            if len(keyword_words) > 1:
+                keyword_lemmas = [self.lemmatize_word(word) for word in keyword_words]
+                for i in range(len(lemmatized_text) - len(keyword_lemmas) + 1):
+                    if lemmatized_text[i:i + len(keyword_lemmas)] == keyword_lemmas:
+                        matches.add(keyword)
+            else:
+                if keyword in lemmatized_text or self.lemmatize_word(keyword) in lemmatized_text:
+                    matches.add(keyword)
+
+        return matches
 
 
 morph = pymorphy3.MorphAnalyzer()
