@@ -55,12 +55,12 @@ WSGI_APPLICATION = "admin_app.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": os.envirion.get("DB_ENGINE", "django.db.backends.postgresql") ,
-        "NAME": os.envirion.get("DB_NAME", "db_bot_teleg"),
-        "USER": os.envirion.get("DB_USER", "postgres"),
-        "PASSWORD": os.envirion.get("DB_PASSWORD", ""),
-        "HOST": os.envirion.get("DB_HOST", "localhost"),
-        "PORT": os.envirion.get("DB_PORT", "5432"),
+        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.environ.get("DB_NAME", "db_bot_teleg"),
+        "USER": os.environ.get("DB_USER", "postgres"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
         "CONN_MAX_AGE": 600,
     },
 }

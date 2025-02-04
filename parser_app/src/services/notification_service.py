@@ -11,7 +11,7 @@ class NotificationService:
     async def notify_admin(
         admin: Admin, post_id: int, channel: Channel, matched_keywords: set[str]
     ):
-        channel_str = f"{channel.name} ({channel.url})" if channel.name else channel.url
+        channel_str = f"{channel.name} ({channel.url}/{post_id})" if channel.name else channel.url
         text = (
             f"Найден пост на канале: {channel_str}\n"
             f"ID поста: {post_id}\n"
@@ -35,7 +35,9 @@ class NotificationService:
             "text": text,
         }
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(
+            verify=False,
+        ) as client:
             try:
                 response = await client.post(url, json=payload)
                 response.raise_for_status()
