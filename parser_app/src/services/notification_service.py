@@ -9,9 +9,13 @@ from src.db.models import Admin, Channel
 class NotificationService:
     @staticmethod
     async def notify_admin(
-        admin: Admin, post_id: int, channel: Channel, matched_keywords: set[str]
+        admin: Admin, post_id: int, channel: Channel, matched_keywords: set[str],
     ):
-        channel_str = f"{channel.name} ({channel.url}/{post_id})" if channel.name else channel.url
+        channel_url = channel.url
+        if channel_url.startswith("https://t.me/s/"):
+            channel_url = f"https://t.me/{channel_url[13:]}"
+
+        channel_str = f"{channel_url}/{post_id}" if channel_url else ""
         text = (
             f"Найден пост на канале: {channel_str}\n"
             f"ID поста: {post_id}\n"
