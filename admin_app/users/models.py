@@ -14,7 +14,7 @@ class Admin(models.Model):
         max_length=255,
         unique=True,
         verbose_name="Telegram ID",
-        help_text="ID пользователя в Telegram. Например, 1234567890, можно узнать у @userinfobot",
+        help_text="ID пользователя в Telegram. Например, 80567890, можно узнать у @userinfobot",
     )
     name = models.CharField(
         max_length=255,
