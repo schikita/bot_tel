@@ -39,5 +39,6 @@ class LemmaService:
         return matches
 
 
+
 morph = pymorphy3.MorphAnalyzer()
 lemma_service = LemmaService(morph)
