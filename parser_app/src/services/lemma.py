@@ -33,11 +33,11 @@ class LemmaService:
                 for i in range(len(lemmatized_text) - len(keyword_lemmas) + 1):
                     if lemmatized_text[i:i + len(keyword_lemmas)] == keyword_lemmas:
                         matches.add(keyword)
-            else:
-                if keyword in lemmatized_text or self.lemmatize_word(keyword) in lemmatized_text:
-                    matches.add(keyword)
+            elif keyword in lemmatized_text or self.lemmatize_word(keyword) in lemmatized_text:
+                matches.add(keyword)
 
         return matches
+
 
 
 morph = pymorphy3.MorphAnalyzer()

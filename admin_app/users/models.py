@@ -65,7 +65,7 @@ class SearchWord(models.Model):
 
         if len(self.word) < 2:
             raise ValidationError(
-                {"word": _("Ключевое слово должно содержать минимум 2 символа.")}
+                {"word": _("Ключевое слово должно содержать минимум 2 символа.")},
             )
 
         if (

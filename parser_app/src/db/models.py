@@ -75,7 +75,7 @@ class SearchWord(Model):
 class AdminSearchWord(Model):
     admin_id = fields.ForeignKeyField("models.Admin", on_delete=fields.CASCADE)
     searchword_id = fields.ForeignKeyField(
-        "models.SearchWord", on_delete=fields.CASCADE
+        "models.SearchWord", on_delete=fields.CASCADE,
     )
 
     class Meta:

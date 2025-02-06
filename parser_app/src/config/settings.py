@@ -1,13 +1,15 @@
-from tortoise import Tortoise
+from tortoise import Tortoise   
+import os
 
-DATABASE_HOST = "localhost"
 DATABASE_PORT = 5432
-DATABASE_USER = "postgres"
-DATABASE_PASSWORD = ""
-DATABASE_NAME = "db_bot_teleg"
+DATABASE_USER = os.environ.get("DB_USER", "postgres")
+DATABASE_PASSWORD = os.environ.get("DB_PASSWORD", "")
+DATABASE_NAME = os.environ.get("DB_NAME", "db_bot_teleg")
+DATABASE_HOST = os.environ.get("DB_HOST", "localhost")
 TIMEZONE = "UTC"
+# 1869894953:AAG4YEXnaKWE7lSBgbecvRcBWIasyiY4o0U
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "7809919634:AAF-vm4Cn8S75JdWZLE7mcQsLE25aDzchKU")
 
-TELEGRAM_BOT_TOKEN = "1869894953:AAG4YEXnaKWE7lSBgbecvRcBWIasyiY4o0U"
 
 DB_CONFIG = {
     "connections": {
