@@ -13,13 +13,13 @@ class NotificationService:
     ):
         channel_url = channel.url
         if channel_url.startswith("https://t.me/s/"):
-            channel_url = f"https://t.me/{channel_url[13:]}"
+            channel_url = f"https://t.me/{channel_url[15:]}"
 
         channel_str = f"{channel_url}/{post_id}" if channel_url else ""
         text = (
-            f"Найден пост на канале: {channel_str}\n"
-            f"ID поста: {post_id}\n"
+            f"Найден пост на канале: {channel.name or channel_str}\n"
             f"Совпадения: {', '.join(matched_keywords)}\n"
+            f"Ссылка: {channel_url}"
         )
         await NotificationService._send_telegram_message(admin.telegram_id, text)
 
