@@ -48,7 +48,7 @@ async def fetch_channel_data(url: str) -> str | None:
             response = await client.get(url)
             response.raise_for_status()
             return response.text
-    except httpx.RequestError as e:
+    except (httpx.RequestError, httpx.HTTPStatusError) as e:
         logger.error(f"Ошибка при запросе {url}: {e}")
         return None
 
