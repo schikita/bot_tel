@@ -5,6 +5,10 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 
 class Admin(models.Model):
     """Модель для администраторов."""
@@ -14,7 +18,7 @@ class Admin(models.Model):
         max_length=255,
         unique=True,
         verbose_name="Telegram ID",
-        help_text="ID пользователя в Telegram. Например, 80567890, можно узнать у @userinfobot",
+        help_text='ID пользователя в Telegram. Например, 80567890, можно узнать у @userinfobot, группы чатов начинаются с знака "-" (минус).',
     )
     name = models.CharField(
         max_length=255,
@@ -34,6 +38,13 @@ class Admin(models.Model):
         blank=True,
         related_name="admins",
         verbose_name="Каналы, на которые подписан администратор",
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="admins",
+        verbose_name="Пользователь",
+        default=None,
     )
 
     class Meta:

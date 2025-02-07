@@ -5,14 +5,22 @@ from .models import Admin, SearchWord
 
 @admin.register(Admin)
 class AdminAdmin(admin.ModelAdmin):
-    list_display = ("name", "telegram_id", "created_at", "words_list")
+    list_display = ("name", "telegram_id", "created_at")
     search_fields = ("name", "telegram_id")
     filter_horizontal = ("words", "channels")
 
-    def words_list(self, obj):
-        return ", ".join([word.word for word in obj.words.all()[:5]])
+    def get_queryset(self, request):
+        """Ограничивает видимость записей в админке."""
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(user=request.user)
 
-    words_list.short_description = "Ключевые слова (Превью 5шт)"
+    def save_model(self, request, obj, form, change):
+        """Автоматически устанавливает текущего пользователя при создании."""
+        if not obj.user_id:
+            obj.user = request.user
+        obj.save()
 
     fieldsets = (
         (
@@ -35,13 +43,6 @@ class AdminAdmin(admin.ModelAdmin):
 
 @admin.register(SearchWord)
 class SearchWordAdmin(admin.ModelAdmin):
-    list_display = ("word", "lemma", "admin_list")
+    list_display = ("id", "word", "lemma")
     search_fields = ("word", "lemma")
-    list_editable = ("lemma",)
-
-    def admin_list(self, obj):
-        return ", ".join(
-            [admin.name or admin.telegram_id for admin in obj.admins.all()],
-        )
-
-    admin_list.short_description = "Администраторы"
+    list_editable = ("word",)
