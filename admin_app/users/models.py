@@ -45,6 +45,8 @@ class Admin(models.Model):
         related_name="admins",
         verbose_name="Пользователь",
         default=None,
+        null=True,
+        blank=True
     )
 
     class Meta:
