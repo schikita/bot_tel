@@ -19,7 +19,7 @@ class NotificationService:
         text = (
             f"Найден пост на канале: {channel.name or channel_str}\n"
             f"Совпадения: {', '.join(matched_keywords)}\n"
-            f"Ссылка: {channel_url}"
+            f"Ссылка: {channel_url}/{post_id}"
         )
         await NotificationService._send_telegram_message(admin.telegram_id, text)
 
