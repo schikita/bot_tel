@@ -17,6 +17,7 @@ services:
       db:
         condition: service_healthy
 
+
   parser:
     build:
       context: ./parser_app
