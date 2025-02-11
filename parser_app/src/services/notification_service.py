@@ -39,9 +39,7 @@ class NotificationService:
             "text": text,
         }
 
-        async with httpx.AsyncClient(
-            verify=False,
-        ) as client:
+        async with httpx.AsyncClient() as client:
             try:
                 response = await client.post(url, json=payload)
                 response.raise_for_status()

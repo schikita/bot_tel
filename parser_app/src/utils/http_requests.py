@@ -42,7 +42,6 @@ async def fetch_channel_data(url: str) -> str | None:
         async with httpx.AsyncClient(
             headers=headers,
             follow_redirects=True,
-            verify=False,
             timeout=30,
         ) as client:
             response = await client.get(url)
