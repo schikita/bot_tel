@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
 
@@ -35,6 +36,7 @@ def extract_numeric_post_id(post_id: str) -> str:
 
 async def fetch_channel_data(url: str) -> str | None:
     """Асинхронно получает HTML-код страницы канала."""
+    await asyncio.sleep(3)
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
     }
