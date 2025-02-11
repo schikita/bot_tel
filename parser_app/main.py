@@ -13,7 +13,7 @@ async def main():
     await init_db()
     while True:
         await ChannelParserService.parse_all_channels()
-        await asyncio.sleep(120)
+        await asyncio.sleep(60*10)
 
 
 if __name__ == "__main__":
