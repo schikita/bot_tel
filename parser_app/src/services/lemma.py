@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from functools import lru_cache
 
 import pymorphy3
@@ -23,7 +24,8 @@ class LemmaService:
 
     def find_matches_in_text(self, text: str, keywords: set[str]) -> set[str]:
         """Ищет совпадения ключевых слов в тексте."""
-        lemmatized_text = self.lemmatize_text(text)
+        cleaned_text = self._remove_punctuation(text)
+        lemmatized_text = self.lemmatize_text(cleaned_text)
         matches = set()
 
         for keyword in keywords:
@@ -33,12 +35,18 @@ class LemmaService:
                 for i in range(len(lemmatized_text) - len(keyword_lemmas) + 1):
                     if lemmatized_text[i:i + len(keyword_lemmas)] == keyword_lemmas:
                         matches.add(keyword)
-            elif keyword in lemmatized_text or self.lemmatize_word(keyword) in lemmatized_text:
+            elif keyword.lower() in lemmatized_text or self.lemmatize_word(keyword) in lemmatized_text:
                 matches.add(keyword)
-
+            elif keyword.lower() in [word.lower() for word in text.split()]:
+                matches.add(keyword)
         return matches
+    
+    def _remove_punctuation(self, text: str) -> str:
+        """Удаляет всю пунктуацию (любые символы, не относящиеся к слову или пробелам)."""
+        return re.sub(r"[^\w\s]+", "", text, flags=re.UNICODE)
 
 
 
 morph = pymorphy3.MorphAnalyzer()
 lemma_service = LemmaService(morph)
+
