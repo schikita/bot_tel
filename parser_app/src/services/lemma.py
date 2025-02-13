@@ -26,7 +26,13 @@ class LemmaService:
         """Ищет совпадения ключевых слов в тексте."""
         cleaned_text = self._remove_punctuation(text)
         lemmatized_text = self.lemmatize_text(cleaned_text)
+        lemmatized_set = set(lemmatized_text)
+
         matches = set()
+
+        raw_split = text.split()
+        raw_split_lower = [w.lower() for w in raw_split]
+        raw_set_lower = set(raw_split_lower)
 
         for keyword in keywords:
             keyword_words = keyword.split()
@@ -35,10 +41,13 @@ class LemmaService:
                 for i in range(len(lemmatized_text) - len(keyword_lemmas) + 1):
                     if lemmatized_text[i:i + len(keyword_lemmas)] == keyword_lemmas:
                         matches.add(keyword)
-            elif keyword.lower() in lemmatized_text or self.lemmatize_word(keyword) in lemmatized_text:
+
+            elif keyword.lower() in lemmatized_set or self.lemmatize_word(keyword) in lemmatized_set:
                 matches.add(keyword)
-            elif keyword.lower() in [word.lower() for word in text.split()]:
+
+            elif keyword.lower() in raw_set_lower:
                 matches.add(keyword)
+
         return matches
     
     def _remove_punctuation(self, text: str) -> str:
