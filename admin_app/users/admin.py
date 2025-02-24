@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Admin, SearchWord
+from .models import Admin, ExcludedPhrase, SearchWord
 
 
 @admin.register(Admin)
@@ -46,3 +46,9 @@ class SearchWordAdmin(admin.ModelAdmin):
     list_display = ("id", "word", "lemma")
     search_fields = ("word", "lemma")
     list_editable = ("word",)
+
+
+@admin.register(ExcludedPhrase)
+class ExcludedPhraseAdmin(admin.ModelAdmin):
+    list_display = ("phrase",)
+    search_fields = ("phrase",)

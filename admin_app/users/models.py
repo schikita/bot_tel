@@ -98,3 +98,21 @@ class SearchWord(models.Model):
 
     def __str__(self):
         return self.word
+
+
+class ExcludedPhrase(models.Model):
+    """Модель для хранения исключаемых фраз."""
+    phrase = models.CharField(
+        max_length=255,
+        verbose_name="Исключаемая фраза",
+        unique=True,
+        validators=[MinLengthValidator(2)],
+    )
+
+    class Meta:
+        verbose_name = "Исключаемая фраза"
+        verbose_name_plural = "Исключаемые фразы"
+        db_table = "excluded_phrase"
+
+    def __str__(self):
+        return self.phrase

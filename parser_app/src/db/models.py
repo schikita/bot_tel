@@ -88,3 +88,12 @@ class AdminChannel(Model):
 
     class Meta:
         table = "users_admin_channels"
+
+
+class ExcludedPhrase(Model):
+    """Модель для хранения исключаемых фраз."""
+    id = fields.IntField(pk=True)
+    phrase = fields.CharField(max_length=255, unique=True)
+
+    class Meta:
+        table = "excluded_phrase"

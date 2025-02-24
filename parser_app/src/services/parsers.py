@@ -5,6 +5,7 @@ import asyncio
 from src.db.models import Channel
 from src.repositories.admin_repository import AdminRepository
 from src.repositories.channel_repository import ChannelRepository
+from src.repositories.excluded_phrases_repository import ExcludedPhraseRepository
 from src.repositories.post_repository import PostRepository
 from src.schemas.posts import PostData
 from src.services.lemma import lemma_service
@@ -55,14 +56,22 @@ class ChannelParserService:
             published_at=post_data.published_at,
         )
 
+        excluded_phrases = await ExcludedPhraseRepository().get_excluded_phrases()
         for admin in await AdminRepository.get_subscribed_admins(channel):
-            admin_lemmas = {
-                word.lemma or lemma_service.lemmatize_word(word.word)
-                for word in admin.words
-            }
+            keywords_without_lemmas = set()
+            all_lemmas = set()
+
+            for word in admin.words:
+                if word.lemma is None:
+                    keywords_without_lemmas.add(word.word)
+                else:
+                    all_lemmas.add(word.lemma)
+
             matched_lemmas = lemma_service.find_matches_in_text(
                 post_data.text,
-                admin_lemmas,
+                keywords_without_lemmas,
+                lemmas=all_lemmas,
+                excluded_phrases=excluded_phrases,
             )
 
             if matched_lemmas:
