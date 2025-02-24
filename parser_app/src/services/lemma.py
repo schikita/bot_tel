@@ -24,10 +24,9 @@ class LemmaService:
 
     def remove_excluded_phrases(self, text: str, exclusions: list[str]) -> str:
         """Удаляет из текста заданные исключаемые фразы."""
-        pattern = r"\b(?:" + "|".join(map(re.escape, exclusions)) + r")\b"
+        pattern = "|".join(map(re.escape, exclusions))
         cleaned_text = re.sub(pattern, "", text, flags=re.IGNORECASE).strip()
 
-        # Убираем лишние пробелы и запятые, если они остались после удаления
         cleaned_text = re.sub(r"\s*,\s*", ", ", cleaned_text)
         cleaned_text = re.sub(r"\s+", " ", cleaned_text).strip()
 
