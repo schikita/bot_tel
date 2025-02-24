@@ -5,7 +5,10 @@ from functools import lru_cache
 
 import pymorphy3
 
-
+EMOJI_PATTERN = re.compile(
+    r"[\U00010000-\U0010FFFF]|[\u2705\u274C\u26A1\u25B6\u2794\u267B\u2757]",
+    flags=re.UNICODE,
+)
 class LemmaService:
     def __init__(self, morph: pymorphy3.MorphAnalyzer) -> None:
         self.morph = morph or pymorphy3.MorphAnalyzer()
@@ -85,6 +88,7 @@ class LemmaService:
 
     def _remove_punctuation(self, text: str) -> str:
         """Удаляет всю пунктуацию (любые символы, не относящиеся к слову или пробелам)."""
+        text = EMOJI_PATTERN.sub("", text)
         return re.sub(r"[^\w\s]+", "", text, flags=re.UNICODE)
 
 

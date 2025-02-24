@@ -10,10 +10,7 @@ from src.schemas.posts import PostData
 
 logger = logging.getLogger(__name__)
 
-EMOJI_PATTERN = re.compile(
-    r"[\U00010000-\U0010FFFF]|[\u2705\u274C\u26A1\u25B6\u2794\u267B\u2757]",
-    flags=re.UNICODE,
-)
+
 
 UNWANTED_CONTENT_PATTERN = re.compile(
     r"Подписывайтесь@[\w]+|Please open Telegram to view this post|VIEW IN TELEGRAM|open Telegram to view this post|[\d]+views|[\d]{2}:[\d]{2}",
@@ -23,7 +20,6 @@ UNWANTED_CONTENT_PATTERN = re.compile(
 
 def clean_text(text: str) -> str:
     """Убирает эмодзи, нежелательные строки и лишние пробелы из текста."""
-    text = EMOJI_PATTERN.sub("", text)
     text = UNWANTED_CONTENT_PATTERN.sub("", text)
     return re.sub(r"\s+", " ", text).strip()
 
