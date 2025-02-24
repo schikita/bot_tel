@@ -18,6 +18,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:80",
     "http://localhost:80",
     "http://localhost:5500",
+    "https://patriot.zn.by",
 ]
 
 INSTALLED_APPS = [
